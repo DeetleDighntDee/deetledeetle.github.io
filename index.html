@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deetle Deetle Dighnt Dighnt</title>
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Cutive+Mono&family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #000000;
+    --parchment: #d9c99a;
+    --rust: #5a1a05;
+    --gold: #6b4400;
+    --shadow: #000000;
+    --fog: #c0a87a;
+    --card-bg: rgba(100,60,0,0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background-color: var(--parchment);
+    color: #000000;
+    font-family: 'Lora', serif;
+    font-size: 18px;
+    line-height: 1.75;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .frame {
+    position: fixed;
+    inset: 12px;
+    border: 2px solid var(--gold);
+    pointer-events: none;
+    z-index: 50;
+    opacity: 0.45;
+  }
+  .frame::before {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    border: 1px solid var(--rust);
+    opacity: 0.35;
+  }
+
+  .corner {
+    position: fixed;
+    width: 44px; height: 44px;
+    z-index: 51; opacity: 0.65;
+  }
+  .corner svg { width: 100%; height: 100%; }
+  .corner-tl { top: 8px; left: 8px; }
+  .corner-tr { top: 8px; right: 8px; transform: scaleX(-1); }
+  .corner-bl { bottom: 8px; left: 8px; transform: scaleY(-1); }
+  .corner-br { bottom: 8px; right: 8px; transform: scale(-1); }
+
+  .page {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 80px 48px 100px;
+  }
+
+  /* MASTHEAD */
+  .masthead {
+    text-align: center;
+    margin-bottom: 56px;
+    animation: fadeDown 1.2s ease both;
+  }
+
+  .issue-line {
+    font-family: 'Cutive Mono', monospace;
+    font-size: 0.88rem;
+    letter-spacing: 0.2em;
+    color: #000000;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .title-main {
+    font-family: 'UnifrakturMaguntia', cursive;
+    font-size: clamp(2.8rem, 7vw, 5.2rem);
+    line-height: 1.05;
+    color: var(--ink);
+    text-shadow: 2px 3px 0px var(--fog);
+    margin-bottom: 6px;
+  }
+
+  .title-sub {
+    font-family: 'UnifrakturMaguntia', cursive;
+    font-size: clamp(1.6rem, 4vw, 2.6rem);
+    color: var(--rust);
+  }
+
+  .ornament-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 28px auto;
+    justify-content: center;
+    opacity: 0.5;
+  }
+  .ornament-divider span { font-size: 1.4rem; color: var(--gold); }
+  .ornament-divider::before,
+  .ornament-divider::after {
+    content: '';
+    flex: 1; max-width: 110px; height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+  }
+
+  .logline {
+    font-size: 1.15rem;
+    line-height: 1.82;
+    font-style: italic;
+    color: #000000;
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .logline strong { font-style: normal; color: var(--rust); font-weight: 700; }
+
+  /* VALISE SCENE */
+  .valise-scene {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    margin: 56px auto;
+    height: 96px;
+    animation: fadeUp 1.6s 0.4s ease both;
+  }
+
+  .seat-wrap { position: relative; width: 210px; }
+
+  .seat {
+    width: 210px; height: 24px;
+    background: var(--rust);
+    border-radius: 4px 4px 0 0;
+    opacity: 0.65;
+    position: relative;
+  }
+  .seat::after {
+    content: '';
+    position: absolute;
+    bottom: -9px; left: 12px; right: 12px; height: 9px;
+    background: var(--shadow);
+    border-radius: 0 0 3px 3px;
+    opacity: 0.45;
+  }
+
+  .valise {
+    width: 40px; height: 30px;
+    background: var(--ink);
+    border-radius: 3px;
+    position: absolute; bottom: 24px;
+    box-shadow: 1px 2px 8px rgba(0,0,0,0.4);
+    animation: sway 4s ease-in-out infinite;
+  }
+  .valise::before {
+    content: '';
+    position: absolute;
+    top: -6px; left: 50%; transform: translateX(-50%);
+    width: 17px; height: 7px;
+    border: 2px solid var(--gold);
+    border-radius: 3px 3px 0 0; border-bottom: none;
+  }
+  .valise::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%; transform: translate(-50%,-50%);
+    width: 60%; height: 1px;
+    background: var(--gold); opacity: 0.5;
+  }
+  .v1 { left: 18px; }
+  .v2 { left: 72px; animation-delay: 1.2s; }
+  .v3 { left: 138px; animation-delay: 0.6s; width: 34px; height: 24px; }
+
+  @keyframes sway {
+    0%,100% { transform: rotate(-1deg); }
+    50% { transform: rotate(1deg); }
+  }
+
+  /* SECTION LABELS */
+  .section-label {
+    font-family: 'Cutive Mono', monospace;
+    font-size: 0.88rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #000000;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .section-heading {
+    font-family: 'UnifrakturMaguntia', cursive;
+    font-size: 2.3rem;
+    color: var(--ink);
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  /* THREE VILLAGES */
+  .villages-grid {
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr 1px 1fr;
+    gap: 0 24px;
+    margin-bottom: 60px;
+    animation: fadeUp 1.4s 0.5s ease both;
+  }
+
+  .village-divider { background: var(--gold); opacity: 0.3; align-self: stretch; }
+
+  .village-item { text-align: center; padding: 24px 14px; }
+
+  .village-name {
+    font-family: 'UnifrakturMaguntia', cursive;
+    font-size: 2rem; color: var(--rust); margin-bottom: 8px;
+  }
+
+  .village-type {
+    font-family: 'Cutive Mono', monospace;
+    font-size: 0.82rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #000000;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .village-desc { font-size: 1rem; line-height: 1.72; color: #000000; }
+
+  /* STORY BLOCK */
+  .story-block {
+    border: 1px solid var(--gold);
+    border-left: 5px solid var(--rust);
+    padding: 38px 42px;
+    margin-bottom: 60px;
+    background: var(--card-bg);
+    position: relative;
+    animation: fadeUp 1.4s 0.6s ease both;
+  }
+
+  .story-block::before {
+    content: '❝';
+    position: absolute;
+    top: -20px; left: 32px;
+    font-size: 2.8rem;
+    color: var(--gold);
+    background: var(--parchment);
+    padding: 0 8px; line-height: 1;
+    opacity: 0.65;
+  }
+
+  .story-block p {
+    font-size: 1.1rem;
+    line-height: 1.85;
+    color: #000000;
+    margin-bottom: 18px;
+  }
+  .story-block p:last-of-type { margin-bottom: 0; }
+
+  .incantation {
+    font-style: italic;
+    font-weight: 700;
+    color: var(--rust);
+  }
+
+  .story-block .attr {
+    display: block;
+    margin-top: 20px;
+    font-style: normal;
+    font-family: 'Cutive Mono', monospace;
+    font-size: 0.84rem;
+    letter-spacing: 0.14em;
+    color: var(--rust);
+    text-align: right;
+  }
+
+  /* MEANING */
+  .meaning-block {
+    margin-bottom: 60px;
+    animation: fadeUp 1.4s 0.7s ease both;
+  }
+
+  .meaning-items { list-style: none; margin-top: 20px; }
+
+  .meaning-items li {
+    font-size: 1.1rem;
+    line-height: 1.75;
+    color: #000000;
+    padding: 16px 0 16px 32px;
+    border-bottom: 1px solid rgba(160,120,32,0.22);
+    position: relative;
+  }
+  .meaning-items li::before {
+    content: '✦';
+    position: absolute; left: 0; top: 20px;
+    color: var(--gold); font-size: 0.85rem;
+  }
+  .meaning-items li:last-child { border-bottom: none; }
+
+  /* TICKER */
+  .ticker-wrap {
+    overflow: hidden;
+    border-top: 1px solid var(--gold);
+    border-bottom: 1px solid var(--gold);
+    padding: 13px 0;
+    margin-bottom: 60px;
+  }
+
+  .ticker {
+    display: flex;
+    white-space: nowrap;
+    animation: ticker 20s linear infinite;
+    font-family: 'Cutive Mono', monospace;
+    font-size: 0.92rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: #000000;
+  }
+  .ticker span { margin-right: 60px; }
+
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* CHARACTERS */
+  .characters {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+    margin-bottom: 60px;
+    animation: fadeUp 1.4s 0.8s ease both;
+  }
+
+  .char-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    max-width: 50%;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .char-card {
+    border: 1px solid rgba(160,120,32,0.4);
+    padding: 26px 28px;
+    background: var(--card-bg);
+  }
+
+  .char-name {
+    font-family: 'UnifrakturMaguntia', cursive;
+    font-size: 2rem; color: var(--rust); margin-bottom: 4px;
+  }
+
+  .char-role {
+    font-family: 'Cutive Mono', monospace;
+    font-size: 0.82rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #000000;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .char-desc {
+    font-size: 1rem;
+    line-height: 1.72;
+    font-style: italic;
+    color: #000000;
+  }
+
+  /* SIGNUP */
+  .signup-section {
+    text-align: center;
+    margin-bottom: 60px;
+    animation: fadeUp 1.4s 0.9s ease both;
+  }
+
+  .signup-heading {
+    font-family: 'UnifrakturMaguntia', cursive;
+    font-size: 2.4rem; color: var(--ink); margin-bottom: 14px;
+  }
+
+  .signup-sub {
+    font-size: 1.05rem;
+    color: #000000;
+    font-style: italic;
+    margin-bottom: 30px;
+    line-height: 1.75;
+  }
+
+  .signup-form {
+    display: flex;
+    max-width: 440px;
+    margin: 0 auto;
+    border: 1px solid var(--gold);
+    background: rgba(255,255,255,0.25);
+  }
+
+  .signup-form input {
+    flex: 1;
+    padding: 15px 20px;
+    background: transparent; border: none; outline: none;
+    font-family: 'Lora', serif;
+    font-size: 1rem;
+    color: var(--ink);
+    font-style: italic;
+  }
+  .signup-form input::placeholder { color: var(--shadow); opacity: 0.45; }
+
+  .signup-form button {
+    padding: 15px 24px;
+    background: var(--rust); color: var(--parchment);
+    border: none; cursor: pointer;
+    font-family: 'Cutive Mono', monospace;
+    font-size: 0.88rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    transition: background 0.2s;
+  }
+  .signup-form button:hover { background: var(--ink); }
+
+  .signup-note {
+    font-family: 'Cutive Mono', monospace;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #000000;
+    margin-top: 14px;
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding-top: 32px;
+    border-top: 1px solid rgba(160,120,32,0.35);
+    animation: fadeUp 1.4s 1s ease both;
+  }
+
+  footer .brand {
+    font-family: 'UnifrakturMaguntia', cursive;
+    font-size: 1.3rem; color: var(--rust); margin-bottom: 10px;
+  }
+
+  footer .copy {
+    font-family: 'Cutive Mono', monospace;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #000000;
+  }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 580px) {
+    body { font-size: 16px; }
+    .page { padding: 60px 24px 80px; }
+    .villages-grid { grid-template-columns: 1fr; }
+    .village-divider { display: none; }
+    .characters { grid-template-columns: 1fr; }
+    .char-card:last-child:nth-child(odd) { max-width: 100%; }
+    .signup-form { flex-direction: column; }
+    .signup-form button { width: 100%; }
+    .story-block { padding: 28px 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="frame"></div>
+<div class="corner corner-tl">
+  <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 4 L4 22 Q4 4 22 4 Z" fill="#a07820" opacity="0.55"/>
+    <path d="M2 2 L2 26 M2 2 L26 2" stroke="#7a2e0e" stroke-width="1.2" opacity="0.5"/>
+    <circle cx="4" cy="4" r="2.5" fill="#a07820" opacity="0.7"/>
+  </svg>
+</div>
+<div class="corner corner-tr"></div>
+<div class="corner corner-bl"></div>
+<div class="corner corner-br"></div>
+
+<div class="page">
+
+  <!-- MASTHEAD -->
+  <header class="masthead">
+    <div class="issue-line">Est. in the fold of uncertain time &nbsp;·&nbsp; Vol. I &nbsp;·&nbsp; The Valise Remains</div>
+    <h1 class="title-main">Deetle Deetle Dighnt Dighnt</h1>
+    <div class="title-sub">Dighnt Deetle Dee</div>
+    <div class="ornament-divider"><span>✦</span></div>
+    <p class="logline">
+      An absurdist folk-myth universe where poetic nonsense and surreal repetition collide —
+      and <strong>the Valises on the seat are never yours to move.</strong>
+    </p>
+  </header>
+
+  <!-- VALISE SCENE -->
+  <div class="valise-scene">
+    <div class="seat-wrap">
+      <div class="valise v1"></div>
+      <div class="valise v2"></div>
+      <div class="valise v3"></div>
+      <div class="seat"></div>
+    </div>
+  </div>
+
+  <!-- THREE VILLAGES -->
+  <div class="section-label">The Origin</div>
+  <h2 class="section-heading">The First Three Villages</h2>
+
+  <div class="villages-grid">
+    <div class="village-item">
+      <div class="village-name">Deetle</div>
+      <span class="village-type">Artists · Dreamers · Wanderers</span>
+      <p class="village-desc">Those whose passions had no clear finish line. The spark that begins things. Joy with no destination required.</p>
+    </div>
+    <div class="village-divider"></div>
+    <div class="village-item">
+      <div class="village-name">Dighnt</div>
+      <span class="village-type">Rulers · Builders · Record-Keepers</span>
+      <p class="village-desc">Those who gave shape to the world. The dose of duty when life falls apart. The structure underneath everything.</p>
+    </div>
+    <div class="village-divider"></div>
+    <div class="village-item">
+      <div class="village-name">Dee</div>
+      <span class="village-type">Listeners · Rememberers · Keepers</span>
+      <p class="village-desc">The quiet ones who saw what no one else noticed. The whisper when nothing needs to be said.</p>
+    </div>
+  </div>
+
+  <!-- THE STORY -->
+  <div class="section-label">The Founding Story</div>
+  <h2 class="section-heading">I Won't Remove the Valises</h2>
+
+  <div class="story-block">
+    <p>One still night on a train, Gary sat across from a man with weathered leather valises on the seat beside him. The conductor appeared. "Remove the valises off of the seat," he snapped. The man hesitated — not from defiance, but from some quiet knowing.</p>
+    <p>He softly sang: <span class="incantation">"Deetle Deetle Dighnt Dighnt, Dighnt Deetle Dee, I won't remove the valises off of the seat."</span></p>
+    <p>The conductor threw the valises from the train. Some burst open. Others vanished into motion. "You see what happens when you don't listen!" he shouted.</p>
+    <p>The man simply sang: <span class="incantation">"Deetle Deetle Dighnt Dighnt, Dighnt Deetle Dee, those valises don't belong to me."</span></p>
+    <p>Gary wrote everything down. Later he told the others. They laughed at the word <em>valises</em>. Except Goober. He looked at the page and said quietly: "They're not just valises. They're burdens. The kind that aren't even ours to carry." And everyone understood.</p>
+    <span class="attr">— The Founding Account</span>
+  </div>
+
+  <!-- MEANING -->
+  <div class="meaning-block">
+    <div class="section-label">The Meaning</div>
+    <h2 class="section-heading">What the Phrase Carries</h2>
+    <ul class="meaning-items">
+      <li>You are not responsible for everything. You did not pack those bags. You did not cause the commotion.</li>
+      <li>Not refusal — clarity. Not coldness — a return to yourself.</li>
+      <li>Strength is not in carrying it all. It is in remembering who you are.</li>
+      <li>The valises may always be there. But you do not have to carry them.</li>
+      <li>The three villages mirror a life: Play. Strive. Reflect. Begin again.</li>
+    </ul>
+  </div>
+
+  <!-- TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker">
+      <span>DEETLE DEETLE DIGHNT DIGHNT</span>
+      <span>✦</span>
+      <span>THOSE VALISES DON'T BELONG TO ME</span>
+      <span>✦</span>
+      <span>DIGHNT DEETLE DEE</span>
+      <span>✦</span>
+      <span>PLAY · STRIVE · REFLECT · BEGIN AGAIN</span>
+      <span>✦</span>
+      <span>DEETLE DEETLE DIGHNT DIGHNT</span>
+      <span>✦</span>
+      <span>THOSE VALISES DON'T BELONG TO ME</span>
+      <span>✦</span>
+      <span>DIGHNT DEETLE DEE</span>
+      <span>✦</span>
+      <span>PLAY · STRIVE · REFLECT · BEGIN AGAIN</span>
+      <span>✦</span>
+    </div>
+  </div>
+
+  <!-- CHARACTERS -->
+  <div class="section-label">The Five</div>
+  <h2 class="section-heading">Walking Toward Three</h2>
+
+  <div class="characters">
+    <div class="char-card">
+      <div class="char-name">Gary</div>
+      <span class="char-role">Protagonist · Reasonable · Irreverent</span>
+      <p class="char-desc">Tried to fix everything — with reason, energy, humor. Sat across from the man on the train. Wrote it all down. He is the witness the story needed.</p>
+    </div>
+    <div class="char-card">
+      <div class="char-name">Otto</div>
+      <span class="char-role">Stoic · Steady · The Filled Silence</span>
+      <p class="char-desc">Thought about his urge to fill silence. Exists at the boundary between dialogue and echo. Speaks in questions that are not quite questions.</p>
+    </div>
+    <div class="char-card">
+      <div class="char-name">Stuart</div>
+      <span class="char-role">Silly · Gentle · Accidental Comic</span>
+      <p class="char-desc">Remembered words unsaid and the guilt woven into quiet. Arrives at the wrong moment with the wrong answer delivered in complete confidence. Means well entirely.</p>
+    </div>
+    <div class="char-card">
+      <div class="char-name">Goober</div>
+      <span class="char-role">Eccentric · Lovable Nerd · Off-Axis Oracle</span>
+      <p class="char-desc">Felt the weight he wore to protect others. The one who first saw the valises for what they truly were. Operates by a logic no one else can access — not wrong, more perpendicular to the question.</p>
+    </div>
+    <div class="char-card">
+      <div class="char-name">Ne'er</div>
+      <span class="char-role">Temperamental · Plain-Spoken · The Fifth Direction</span>
+      <p class="char-desc">Stormed in loud and urgent. "What about the valises? Who is going to deal with them?" Not outside the rhythm — the sharpest part of it. Fire not to burn, but to guard something unnamed.</p>
+    </div>
+  </div>
+
+  <!-- EMAIL SIGNUP -->
+  <div class="signup-section">
+    <div class="section-label">Dispatches from the Loop</div>
+    <h2 class="signup-heading">Enter the Universe</h2>
+    <p class="signup-sub">
+      Receive transmissions as the world of Deetle Deetle Dighnt Dighnt expands —<br>
+      new episodes, artifacts, NFT drops, and things with no name yet.
+    </p>
+    <div class="signup-form">
+      <input type="email" placeholder="your@address.com" />
+      <button type="button">Subscribe</button>
+    </div>
+    <p class="signup-note">No algorithms. No noise. Only the loop.</p>
+  </div>
+
+  <footer>
+    <div class="brand">Deetle Deetle Dighnt Dighnt, Dighnt Deetle Dee</div>
+    <div class="copy">The Valises have not been moved &nbsp;·&nbsp; All rights reserved &nbsp;·&nbsp; The seat remains occupied</div>
+  </footer>
+
+</div>
+</body>
+</html>
