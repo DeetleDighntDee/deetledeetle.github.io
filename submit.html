@@ -470,9 +470,10 @@
     <div class="subtitle">Declare Your Village</div>
     <div class="ornament"><span>✦</span></div>
     <p class="intro">
-      The Council is listening. Citizens of Deetle, Dighnt, and Dee are called to declare themselves.
-      Submit your twenty-second video below. The best submissions become canon.
-      Your village will be credited on screen.
+      The Council is listening. In your 20-second video you must make two declarations —
+      which village you are from, and why the Valises do not belong to you.
+      The Council will deliberate and render its judgment.
+      The best submissions become canon.
     </p>
   </header>
 
@@ -520,17 +521,22 @@
       </div>
 
       <div class="field-group">
-        <label class="field-label" for="why">Step 5 — Why are you from that village?</label>
-        <textarea class="field-input" id="why" name="why" placeholder="In your own words. No wrong answers. The Council will decide."></textarea>
+        <label class="field-label" for="whyVillage">Step 5 — Why are you from that village?</label>
+        <textarea class="field-input" id="whyVillage" name="why-village" placeholder="Explain why you belong to Deetle, Dighnt, or Dee."></textarea>
       </div>
 
       <div class="field-group">
-        <label class="field-label">Step 6 — Upload your 20-second video</label>
+        <label class="field-label" for="valises">Step 6 — Declare your Valises</label>
+        <textarea class="field-input" id="valises" name="valises" placeholder="What burdens are you carrying that were never yours? Declare them here and assert clearly — those Valises do not belong to you. The Council will judge."></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Step 7 — Upload your 20-second video</label>
         <div class="upload-zone" id="uploadZone">
           <input type="file" id="videoFile" name="video" accept="video/*" onchange="handleFile(this)" />
           <span class="upload-icon">🎬</span>
           <div class="upload-text">Tap to select your video — 20 seconds maximum</div>
-          <div class="upload-sub">20 seconds maximum · MP4, MOV, or any standard video format</div>
+          <div class="upload-sub">In your video: declare your village AND declare that your Valises do not belong to you.</div>
           <div class="upload-filename" id="fileName"></div>
         </div>
       </div>
